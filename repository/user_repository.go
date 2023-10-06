@@ -32,10 +32,6 @@ func (r *userRepository) GetAllUsersRepository(page, limit int) ([]*model.Users,
 	if err != nil {
 		return nil, err
 	}
-	// err := r.db.Offset(offset).Limit(limit).Order("created_at DESC").Find(&users).Error
-	// if err != nil {
-	// 	return nil, err
-	// }
 
 	return users, nil
 }
