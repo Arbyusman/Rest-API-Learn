@@ -10,7 +10,7 @@ import (
 )
 
 type UserUsecase interface {
-	GetAllUsersUseCase(page, limit int) ([]*model.UserResponse, error)
+	GetAllUsersUseCase(page, limit int) ([]*model.UserResponse, int, error)
 	GetUserByIDUseCase(userId string) (*model.UserResponse, error)
 	UpdateUserByIDUseCase(userId string, payload *model.Users) (*model.UserResponse, error)
 	DeleteUserByIDUseCase(userId string) error
@@ -26,14 +26,12 @@ func NewUserUsecase(userRepository repository.UserRepository) *userUsecase {
 	}
 }
 
-func (uc *userUsecase) GetAllUsersUseCase(page, limit int) ([]*model.UserResponse, error) {
+func (uc *userUsecase) GetAllUsersUseCase(page, limit int) ([]*model.UserResponse, int, error) {
 
-	users, err := uc.userRepository.GetAllUsersRepository(page, limit)
+	users, totalCount, err := uc.userRepository.GetAllUsersRepository(page, limit)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get all users: %v", err)
+		return nil, 0, fmt.Errorf("failed to get all users: %v", err)
 	}
-
-	fmt.Println("users", users)
 
 	resp := make([]*model.UserResponse, 0, len(users))
 	for _, user := range users {
@@ -50,7 +48,7 @@ func (uc *userUsecase) GetAllUsersUseCase(page, limit int) ([]*model.UserRespons
 		})
 	}
 
-	return resp, nil
+	return resp, totalCount, nil
 }
 
 func (uc *userUsecase) GetUserByIDUseCase(userId string) (*model.UserResponse, error) {

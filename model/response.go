@@ -20,6 +20,7 @@ type MetaData struct {
 type Pagination struct {
 	Limit int `json:"limit"`
 	Page  int `json:"page"`
+	Count int `json:"count"`
 }
 
 type AuthResponse struct {

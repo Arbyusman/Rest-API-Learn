@@ -9,7 +9,7 @@ import (
 )
 
 type UserRepository interface {
-	GetAllUsersRepository(page, limit int) ([]*model.Users, error)
+	GetAllUsersRepository(page, limit int) ([]*model.Users, int, error)
 	GetUserByIDRepository(id string) (*model.Users, error)
 	UpdateUserByIDRepository(id string, user *model.Users) (*model.Users, error)
 	DeleteUserByIDRepository(id string) error
@@ -23,17 +23,23 @@ func NewUserRepository(db *gorm.DB) *userRepository {
 	return &userRepository{db}
 }
 
-func (r *userRepository) GetAllUsersRepository(page, limit int) ([]*model.Users, error) {
+func (r *userRepository) GetAllUsersRepository(page, limit int) ([]*model.Users, int, error) {
 	var users []*model.Users
+	var totalCount int64
 
 	offset := (page - 1) * limit
 
 	err := r.db.Offset(offset).Limit(limit).Find(&users).Error
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
-	return users, nil
+	err = r.db.Model(&model.Users{}).Count(&totalCount).Error
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return users, int(totalCount), nil
 }
 
 func (r *userRepository) GetUserByIDRepository(id string) (*model.Users, error) {

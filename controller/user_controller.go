@@ -46,7 +46,7 @@ func (ctrl *userController) GetAllUsersController(c *fiber.Ctx) error {
 		limit = 10
 	}
 
-	users, err := ctrl.UserUsecase.GetAllUsersUseCase(page, limit)
+	users, count, err := ctrl.UserUsecase.GetAllUsersUseCase(page, limit)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(model.ErrorResponse{
 			StatusCode: fiber.StatusInternalServerError,
@@ -63,6 +63,7 @@ func (ctrl *userController) GetAllUsersController(c *fiber.Ctx) error {
 		Pagination: &model.Pagination{
 			Page:  page,
 			Limit: limit,
+			Count: count,
 		},
 	})
 }
