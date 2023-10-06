@@ -9,8 +9,8 @@ import (
 )
 
 type AuthController interface {
-	LoginController(c fiber.Ctx) error
-	RegisterController(c fiber.Ctx) error
+	Login(c *fiber.Ctx) error
+	Register(c *fiber.Ctx) error
 }
 
 type authController struct {
@@ -23,7 +23,7 @@ func NewAuthController(authUsecase usecase.AuthUsecase) *authController {
 	}
 }
 
-func (u *authController) LoginController(c fiber.Ctx) error {
+func (u *authController) Login(c *fiber.Ctx) error {
 	var payload model.Users
 
 	if err := c.BodyParser(&payload); err != nil {
@@ -41,7 +41,7 @@ func (u *authController) LoginController(c fiber.Ctx) error {
 		})
 	}
 
-	return c.Status(fiber.StatusBadRequest).JSON(model.HttpResponse{
+	return c.Status(fiber.StatusOK).JSON(model.HttpResponse{
 		MetaData: model.MetaData{
 			StatusCode: http.StatusOK,
 			Message:    "User Login successfully",
@@ -51,7 +51,7 @@ func (u *authController) LoginController(c fiber.Ctx) error {
 
 }
 
-func (u *authController) RegisterController(c fiber.Ctx) error {
+func (u *authController) Register(c *fiber.Ctx) error {
 	var payload model.Users
 
 	if err := c.BodyParser(&payload); err != nil {
@@ -69,7 +69,35 @@ func (u *authController) RegisterController(c fiber.Ctx) error {
 		})
 	}
 
-	return c.Status(fiber.StatusBadRequest).JSON(model.HttpResponse{
+	return c.Status(fiber.StatusOK).JSON(model.HttpResponse{
+		MetaData: model.MetaData{
+			StatusCode: http.StatusOK,
+			Message:    "User Register successfully",
+		},
+		Data: user,
+	})
+
+}
+
+func (u *authController) RegisterAdmin(c *fiber.Ctx) error {
+	var payload model.Users
+
+	if err := c.BodyParser(&payload); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse{
+			StatusCode: http.StatusBadRequest,
+			Message:    err.Error(),
+		})
+	}
+
+	user, err := u.authUsecase.RegisterAdminUseCase(payload)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(model.ErrorResponse{
+			StatusCode: http.StatusBadRequest,
+			Message:    err.Error(),
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(model.HttpResponse{
 		MetaData: model.MetaData{
 			StatusCode: http.StatusOK,
 			Message:    "User Register successfully",

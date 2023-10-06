@@ -28,9 +28,10 @@ type Config struct {
 	ApiKey   string `mapstructure:"API_KEY"`
 
 	// Cloudinary
-	CloudName string `mapstructure:"CLOUD_NAME"`
-	CloudKey  string `mapstructure:"CLOUD_KEY"`
-	ApiSecret string `mapstructure:"API_SECRET"`
+	CloudName   string `mapstructure:"CLOUD_NAME"`
+	CloudKey    string `mapstructure:"CLOUD_KEY"`
+	ApiSecret   string `mapstructure:"API_SECRET"`
+	CloudFolder string `mapstructure:"CLOUD_FOLDER"`
 }
 
 var (

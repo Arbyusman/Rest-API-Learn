@@ -4,6 +4,7 @@ import (
 	"Rest-API/config"
 	"Rest-API/database"
 	"Rest-API/routes"
+	m "Rest-API/usecase/middleware"
 	"fmt"
 	"log"
 
@@ -19,11 +20,13 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to connect to the database: %v", err)
 	}
-	database.Migrate(db)
+	// database.Drop(db)
+	// database.Migrate(db)
 
+	m.LogMiddlewares(app)
 	routes.Routes(app, db)
+
 	fmt.Println(config.AppConfig.AppPort)
-	// var port = fmt.Sprintf(":%s", config.AppConfig.AppPort)
 	log.Fatal(app.Listen(fmt.Sprintf(":%s", config.AppConfig.AppPort)))
 
 }

@@ -11,6 +11,8 @@ import (
 type UserRepository interface {
 	GetAllUsersRepository(page, limit int) ([]*model.Users, error)
 	GetUserByIDRepository(id string) (*model.Users, error)
+	UpdateUserByIDRepository(id string, user *model.Users) (*model.Users, error)
+	DeleteUserByIDRepository(id string) error
 }
 
 type userRepository struct {
@@ -23,14 +25,18 @@ func NewUserRepository(db *gorm.DB) *userRepository {
 
 func (r *userRepository) GetAllUsersRepository(page, limit int) ([]*model.Users, error) {
 	var users []*model.Users
+
 	offset := (page - 1) * limit
 
-	query := r.db.Offset(offset).Limit(limit)
-
-	result := query.Order("created_at DESC").Find(&users)
-	if result.Error != nil {
-		return nil, fmt.Errorf("error getting users: %s", result.Error)
+	err := r.db.Offset(offset).Limit(limit).Find(&users).Error
+	if err != nil {
+		return nil, err
 	}
+	// err := r.db.Offset(offset).Limit(limit).Order("created_at DESC").Find(&users).Error
+	// if err != nil {
+	// 	return nil, err
+	// }
+
 	return users, nil
 }
 

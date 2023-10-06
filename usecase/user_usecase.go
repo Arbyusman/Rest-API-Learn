@@ -5,13 +5,15 @@ import (
 	"Rest-API/repository"
 	"errors"
 	"fmt"
-
-	"golang.org/x/crypto/bcrypt"
+	"strings"
+	"time"
 )
 
 type UserUsecase interface {
 	GetAllUsersUseCase(page, limit int) ([]*model.UserResponse, error)
 	GetUserByIDUseCase(userId string) (*model.UserResponse, error)
+	UpdateUserByIDUseCase(userId string, payload *model.Users) (*model.UserResponse, error)
+	DeleteUserByIDUseCase(userId string) error
 }
 
 type userUsecase struct {
@@ -31,14 +33,20 @@ func (uc *userUsecase) GetAllUsersUseCase(page, limit int) ([]*model.UserRespons
 		return nil, fmt.Errorf("failed to get all users: %v", err)
 	}
 
+	fmt.Println("users", users)
+
 	resp := make([]*model.UserResponse, 0, len(users))
 	for _, user := range users {
 		resp = append(resp, &model.UserResponse{
 			ID:        user.ID,
 			Name:      user.Name,
 			Email:     user.Email,
-			CreatedAt: user.CreatedAt,
+			Phone:     user.Phone,
+			Role:      user.Role,
+			Address:   user.Address,
+			Image:     user.Image,
 			UpdatedAt: user.UpdatedAt,
+			CreatedAt: user.CreatedAt,
 		})
 	}
 
@@ -56,6 +64,10 @@ func (uc *userUsecase) GetUserByIDUseCase(userId string) (*model.UserResponse, e
 		ID:        user.ID,
 		Name:      user.Name,
 		Email:     user.Email,
+		Phone:     user.Phone,
+		Role:      user.Role,
+		Address:   user.Address,
+		Image:     user.Image,
 		UpdatedAt: user.UpdatedAt,
 		CreatedAt: user.CreatedAt,
 	}
@@ -63,15 +75,49 @@ func (uc *userUsecase) GetUserByIDUseCase(userId string) (*model.UserResponse, e
 	return resp, nil
 }
 
-func CompareHashPin(hashPin string, pin string) bool {
-	err := bcrypt.CompareHashAndPassword([]byte(hashPin), []byte(pin))
-	return err == nil
+func (uc *userUsecase) UpdateUserByIDUseCase(userId string, payload *model.Users) (*model.UserResponse, error) {
+
+	lowercasePayload := &model.Users{
+		Name:    strings.ToLower(payload.Name),
+		Email:   strings.ToLower(payload.Email),
+		Address: strings.ToLower(payload.Address),
+		Phone:   payload.Phone,
+	}
+
+	user, err := uc.userRepository.GetUserByIDRepository(userId)
+	if err != nil {
+		return nil, fmt.Errorf("User Not Found: %v", err)
+	}
+
+	user.Name = lowercasePayload.Name
+	user.Address = lowercasePayload.Address
+	user.Phone = lowercasePayload.Phone
+	user.Image = payload.Image
+	user.UpdatedAt = time.Now()
+
+	updatedUser, err := uc.userRepository.UpdateUserByIDRepository(userId, user)
+	if err != nil {
+		return nil, fmt.Errorf("failed to update user: %v", err)
+	}
+
+	resp := &model.UserResponse{
+		ID:        updatedUser.ID,
+		Name:      updatedUser.Name,
+		Email:     updatedUser.Email,
+		Phone:     updatedUser.Phone,
+		Role:      updatedUser.Role,
+		Address:   updatedUser.Address,
+		Image:     updatedUser.Image,
+		UpdatedAt: updatedUser.UpdatedAt,
+	}
+
+	return resp, nil
 }
 
-func HashPin(pin string) string {
-	hashedPin, err := bcrypt.GenerateFromPassword([]byte(pin), bcrypt.DefaultCost)
+func (uc *userUsecase) DeleteUserByIDUseCase(userId string) error {
+	err := uc.userRepository.DeleteUserByIDRepository(userId)
 	if err != nil {
-		return ""
+		return errors.New("user not found")
 	}
-	return string(hashedPin)
+	return err
 }

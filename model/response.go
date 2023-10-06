@@ -26,6 +26,7 @@ type AuthResponse struct {
 	ID    string `json:"id"`
 	Name  string `json:"name"`
 	Email string `json:"email"`
+	Role  string `json:"role" `
 	Token string `json:"token"`
 }
 
@@ -33,8 +34,7 @@ type UserResponse struct {
 	ID        string    `json:"id" `
 	Name      string    `json:"name" `
 	Email     string    `json:"email" `
-	Balance   float64   `json:"balance" `
-	Pin       string    `json:"pin" `
+	Role      string    `json:"role" `
 	Phone     string    `json:"phone"`
 	Image     string    `json:"image"`
 	Address   string    `json:"address"`

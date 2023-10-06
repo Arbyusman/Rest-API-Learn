@@ -6,12 +6,18 @@ import (
 	"gorm.io/gorm"
 )
 
+const USER_TYPE = "user"
+const ADMIN_TYPE = "admin"
+const ALL_TYPE = "all"
+
 type Users struct {
 	ID        string         `gorm:"primaryKey;default:gen_random_uuid()" json:"id"`
 	Name      string         `gorm:"type:varchar(100)" json:"name" `
 	Email     string         `gorm:"type:varchar(100)" json:"email" `
-	Alamat    string         `gorm:"type:text" json:"alamat"`
-	NoHp      string         `gorm:"type:varchar(20)" json:"nomor_handphone"`
+	Role      string         `gorm:"type:varchar(100)" json:"role"`
+	Address   string         `gorm:"type:text" json:"address"`
+	Image     string         `gorm:"type:text" json:"image"`
+	Phone     string         `gorm:"type:varchar(20)" json:"phone"`
 	Password  string         `gorm:"type:varchar" json:"password"`
 	DeletedAt gorm.DeletedAt ` json:"deleted_at"`
 	CreatedAt time.Time      ` json:"created_at"`
