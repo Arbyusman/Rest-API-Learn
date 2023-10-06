@@ -41,7 +41,7 @@ var (
 func LoadConfig() *Config {
 
 	viper.SetConfigType("env")
-	viper.SetConfigName("public")
+	viper.SetConfigName("local")
 	viper.AddConfigPath(".")
 
 	if err := viper.ReadInConfig(); err != nil {
