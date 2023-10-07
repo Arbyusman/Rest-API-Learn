@@ -20,8 +20,10 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to connect to the database: %v", err)
 	}
+	fmt.Println("db connect")
+
 	// database.Drop(db)
-	// database.Migrate(db)
+	database.Migrate(db)
 
 	m.LogMiddlewares(app)
 	routes.Routes(app, db)

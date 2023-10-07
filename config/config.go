@@ -22,11 +22,6 @@ type Config struct {
 	// middlewares
 	SecretJWT string `mapstructure:"SECRET_JWT"`
 
-	// oy
-	BaseUrl  string `mapstructure:"BASEURL"`
-	Username string `mapstructure:"USERNAME"`
-	ApiKey   string `mapstructure:"API_KEY"`
-
 	// Cloudinary
 	CloudName   string `mapstructure:"CLOUD_NAME"`
 	CloudKey    string `mapstructure:"CLOUD_KEY"`
