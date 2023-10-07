@@ -15,6 +15,7 @@ type Config struct {
 	DBName     string `mapstructure:"DB_DBNAME"`
 	DBPort     string `mapstructure:"DB_PORT"`
 	SSLMode    string `mapstructure:"SSL_MODE"`
+	DBType     string `mapstructure:"DB_TYPE"`
 
 	// app
 	AppPort string `mapstructure:"APP_PORT"`

@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -40,6 +41,7 @@ func (s *authUsecase) RegisterUseCase(payload model.Users) (*model.AuthResponse,
 	hashedPassword, _ := HashPassword(payload.Password)
 
 	newUserModel := model.Users{
+		ID:       uuid.New().String(),
 		Name:     lowercasePayload.Name,
 		Email:    lowercasePayload.Email,
 		Role:     model.USER_TYPE,
